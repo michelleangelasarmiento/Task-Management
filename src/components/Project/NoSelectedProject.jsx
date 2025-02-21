@@ -1,5 +1,5 @@
-import noProjectImg from '../assets/no-projects.png';
-import Button from './Button';
+import noProjectImg from '../../assets/no-projects.png';
+import Button from '../Button';
 
 export default function NoSelectedProject({onAddProject}) {
     return (

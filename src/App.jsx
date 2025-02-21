@@ -1,14 +1,17 @@
 import { useState } from "react";
-import NewProject from "./components/NewProject";
-import NoSelectedProject from "./components/NoSelectedProject";
+import NewProject from "./components/Project/NewProject";
+import NoSelectedProject from "./components/Project/NoSelectedProject";
 import Sidebar from "./components/Sidebar";
-import SelectedProject from "./components/SelectedProject";
+import SelectedProject from "./components/Project/SelectedProject";
 
 function App() {
   const [projectState,setProjectState] = useState({
     selectedProjectId: undefined,
-    projects:[]
+    projects: [],
+    tasks:[]
   });
+
+  /* Projects related */
 
   function handleStartAddProject() {
     setProjectState(prevState => {
@@ -66,9 +69,38 @@ function App() {
     });
   }
 
+  /* Tasks related */
+  function handleAddTask(task) {
+    setProjectState(prevState => {
+      const newTask = {
+        text: task,
+        projectId:prevState.selectedProjectId,
+        id: Math.random()
+      };
+
+      return {
+        ...prevState,
+        tasks:[...prevState.tasks, newTask]
+      }
+    })
+    
+  }
+
+  function handleDeleteTask(id) {
+     setProjectState(prevState => {
+      return {
+        ...prevState,
+        tasks:prevState.tasks.filter((task)=>task.id !== id)
+      };
+    });
+    
+  }
+
   const selectedProjectById = projectState.projects.find(proj => proj.id === projectState.selectedProjectId);
 
-  let content = <SelectedProject proj={selectedProjectById} onDelete={handleDeleteProject } />
+  let content = <SelectedProject proj={selectedProjectById} onDelete={handleDeleteProject}
+    onAddTask={handleAddTask} onDeleteTask={handleDeleteTask}
+    tasks={projectState.tasks} />
 
   if (projectState.selectedProjectId === null) {
     content = <NewProject onAddingProject={handleAddProject} onCancellingAddingProject={handleCancelAddingProject} />
@@ -79,7 +111,7 @@ function App() {
   return (
     <main className="h-screen my-8 flex gap-8">
       <Sidebar onAddProject={handleStartAddProject} projects={projectState.projects}
-        onSelectProject={handleSelectingProject} />
+        onSelectProject={handleSelectingProject}  selectedProjectId={projectState.selectedProjectId}/>
       {content}
     </main>
   );
